@@ -9,7 +9,8 @@ var express = require('express')
   , book = require('./routes/book')
   , http = require('http')
   , mongoose = require('mongoose')
-  , path = require('path');
+  , path = require('path')
+  , cors = require('./cors');;
 
 var app = express();
 
@@ -22,6 +23,7 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
+  app.use(cors);
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
@@ -31,8 +33,9 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/books', book.list);
+app.all('/book/:id', cors);
 app.get('/book/:id', book.restore);
-app.get('/add', book.add);
+//app.get('/add', book.add);
 app.put('/book/:id', book.save);
 app.get('/users', user.list);
 
