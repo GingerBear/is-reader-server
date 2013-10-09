@@ -5,7 +5,7 @@
 
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/is_reader');
+mongoose.connect('mongodb://bbbear444:123qweasd@ds049898.mongolab.com:49898/is-reader');
 
 var Schema = mongoose.Schema;  
 

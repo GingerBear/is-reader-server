@@ -31,6 +31,7 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/book/:id', book.restore);
+app.get('/add', book.add);
 app.put('/book/:id', book.save);
 app.get('/users', user.list);
 
