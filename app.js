@@ -30,6 +30,7 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.get('/books', book.list);
 app.get('/book/:id', book.restore);
 app.get('/add', book.add);
 app.put('/book/:id', book.save);

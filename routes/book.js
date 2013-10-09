@@ -17,6 +17,22 @@ var Book = new Schema({
 
 var BookModel = mongoose.model('Book', Book);  
 
+exports.list = function(req, res){
+  return BookModel.find(function (err, books) {
+    console.log(books);
+    if (!err) {
+      return res.json({
+        data: books,
+        empty: false
+      });
+    } else {
+      return res.json({
+        empty: true
+      });
+    }
+  });
+};
+
 exports.restore = function(req, res){
   return BookModel.findById(req.params.id, function (err, book) {
     console.log(book);
