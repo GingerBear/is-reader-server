@@ -21,12 +21,12 @@ exports.list = function(req, res){
   return BookModel.find(function (err, books) {
     console.log(books);
     if (!err) {
-      return res.json({
+      return res.jsonp({
         data: books,
         empty: false
       });
     } else {
-      return res.json({
+      return res.jsonp({
         empty: true
       });
     }
@@ -37,12 +37,12 @@ exports.restore = function(req, res){
   return BookModel.findById(req.params.id, function (err, book) {
     console.log(book);
     if (!err) {
-      return res.json({
+      return res.jsonp({
         data: book,
         empty: false
       });
     } else {
-      return res.json({
+      return res.jsonp({
         empty: true
       });
     }
@@ -55,9 +55,9 @@ exports.save = function(req, res){
     book.last_page = req.body.last_page;
     return book.save(function (err) {
       if (!err) {
-        return res.json({ success: true });
+        return res.jsonp({ success: true });
       } else {
-        return res.json({ success: false });
+        return res.jsonp({ success: false });
       }
     });
   });
