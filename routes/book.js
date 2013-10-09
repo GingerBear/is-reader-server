@@ -22,7 +22,7 @@ exports.list = function(req, res){
     console.log(books);
     if (!err) {
       return res.jsonp({
-        data: books,
+        books: books,
         empty: false
       });
     } else {
@@ -37,14 +37,9 @@ exports.restore = function(req, res){
   return BookModel.findById(req.params.id, function (err, book) {
     console.log(book);
     if (!err) {
-      return res.jsonp({
-        data: book,
-        empty: false
-      });
+      return res.jsonp(book);
     } else {
-      return res.jsonp({
-        empty: true
-      });
+      return res.jsonp(false);
     }
   });
 };
