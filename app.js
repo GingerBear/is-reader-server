@@ -16,6 +16,7 @@ var app = express();
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
+  app.use(express.static(path.join(__dirname, 'public')));
   // app.set('views', __dirname + '/views');
   // app.set('view engine', 'jade');
   app.use(express.favicon());
@@ -24,12 +25,23 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(cors);
-  app.use(express.static(path.join(__dirname, 'public')));
 });
 
 app.configure('development', function(){
   app.use(express.errorHandler());
 });
+
+// static page
+app.get('/', function (req, res) {
+    res.sendfile('index.html');
+});
+app.get('/index.html', function (req, res) {
+    res.sendfile(filedir + '/index.html');
+});
+app.get('/reader.html', function (req, res) {
+    res.sendfile(filedir + '/reader.html');
+});
+
 
 // BOOK
 // app.get('/', routes.index);
