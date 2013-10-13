@@ -1,34 +1,18 @@
 
 /*
- * GET home page.
+ * GET Book data.
  */
 
-var mongoose = require('mongoose');
-
-mongoose.connect('mongodb://bbbear444:123qweasd@ds049898.mongolab.com:49898/is-reader');
-
-var Schema = mongoose.Schema;  
-
-var Book = new Schema({
-    title: { type: String, required: true },  
-    file_name: { type: String, required: true },  
-    last_page: { type: Number, required: true }
-});
-
-var BookModel = mongoose.model('Book', Book);  
+var book = require('../models/book_model.js');
+var BookModel = book.model;
 
 exports.list = function(req, res){
   return BookModel.find(function (err, books) {
     console.log(books);
     if (!err) {
-      return res.jsonp({
-        books: books,
-        empty: false
-      });
+      return res.jsonp({ books: books, empty: false });
     } else {
-      return res.jsonp({
-        empty: true
-      });
+      return res.jsonp({ empty: true });
     }
   });
 };
@@ -45,8 +29,9 @@ exports.restore = function(req, res){
 };
 
 exports.save = function(req, res){
-  return BookModel.find(req.params.id, function (err, book) {
-    book = book[0];
+  //return BookModel.findById({_id: req.params.id}, function (err, book) {
+  return BookModel.findById(req.params.id, function (err, book) {
+    console.log(book);
     book.last_page = req.body.last_page;
     return book.save(function (err) {
       if (!err) {
@@ -58,17 +43,29 @@ exports.save = function(req, res){
   });
 };
 
+exports.remove = function(req, res){
+  return BookModel.find(req.params.id, function (err, book) {
+    // book = book[0];
+    // book.last_page = req.body.last_page;
+    // return book.save(function (err) {
+    //   if (!err) {
+    //     return res.jsonp({ success: true });
+    //   } else {
+    //     return res.jsonp({ success: false });
+    //   }
+    // });
+  });
+};
+
 exports.add = function(req, res){
-  var book;
-  console.log("ADD: ");
-  book = new BookModel({
-    title: "JavaScript Web Application",  
-    file_name: "jwa.pdf",
-    last_page: 12
+  var book = new BookModel({
+    title: req.body.title,  
+    file_name: req.body.file_name,
+    last_page: 0
   });
   book.save(function (err) {
     if (!err) {
-      return console.log("created");
+      return console.log("Book added");
     } else {
       return console.log(err);
     }
