@@ -79,13 +79,12 @@
 
             $.ajax({
                 type: 'GET',
-                url: "http://is-reader.herokuapp.com/book/" + book_id,
-                //url: "http://localhost:3000/book/" + book_id,
+                //url: "http://is-reader.herokuapp.com/book/" + book_id,
+                url: "http://localhost:3000/book/" + book_id,
                 dataType: 'jsonp',
                 success: function(data){
                     console.log(data);
                     if (data) {
-                        $('.title').html(data.title);
                         $('.title').html(data.title);
                         page = new LoadPage(data.file_name, data.last_page, data._id);
                         page.init();

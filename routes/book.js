@@ -4,7 +4,35 @@
  */
 
 var book = require('../models/book_model.js');
+var user = require('../models/user_model.js');
+var user_book = require('../models/user_book_model.js');
 var BookModel = book.model;
+var UserModel = user.model;
+var UserBookModel = user_book.model;
+
+exports.listUserBook = function(req, res){
+    console.log(req.cookies);
+    console.log(req.cookies.id);
+  return UserBookModel.find({user_id: req.cookies.id}, function (err, user_books) {
+    console.log(user_books);
+    var book_ids = [];
+    for (var i = user_books.length - 1; i >= 0; i--) {
+      book_ids.push(user_books[i].book_id);
+    };
+    if (!err) {
+      return BookModel.find({_id: {$in: book_ids}}, function (err, books) {
+        console.log(books);
+        if (!err) {
+          return res.jsonp({ books: books, empty: false });
+        } else {
+          return res.jsonp({ empty: true });
+        }
+      });
+    } else {
+      return res.jsonp({ empty: true });
+    }
+  });
+};
 
 exports.list = function(req, res){
   return BookModel.find(function (err, books) {
@@ -19,21 +47,26 @@ exports.list = function(req, res){
 
 exports.restore = function(req, res){
   return BookModel.findById(req.params.id, function (err, book) {
-    console.log(book);
     if (!err) {
-      return res.jsonp(book);
+      return UserBookModel.find({book_id: book._id, user_id: req.cookies.id}, function (err, userBook) {
+        book.last_page = userBook[0].last_page;
+        if (!err) {
+          return res.jsonp(book);
+        } else {
+          return res.jsonp(false);
+        }
+      });
     } else {
-      return res.jsonp(false);
+      return res.jsonp({ empty: true });
     }
   });
 };
 
 exports.save = function(req, res){
-  //return BookModel.findById({_id: req.params.id}, function (err, book) {
-  return BookModel.findById(req.params.id, function (err, book) {
-    console.log(book);
-    book.last_page = req.body.last_page;
-    return book.save(function (err) {
+  return UserBookModel.findOne({book_id: req.params.id, user_id: req.cookies.id}, function (err, user_book) {
+    console.log(user_book);
+    user_book.last_page = req.body.last_page;
+    return user_book.save(function (err) {
       if (!err) {
         return res.jsonp({ success: true });
       } else {
