@@ -17,8 +17,8 @@ var LoadPage = function () {
     , notes = [] // fill hights of current page by server
     , pdf // store pdf file into a locally global variable 
     , selectionPosition
-    // , base_url = "http://is-reader.herokuapp.com/";
-    , base_url = "http://localhost:3000/";
+    , base_url = "http://is-reader.herokuapp.com/";
+    //, base_url = "http://localhost:3000/";
 
     // RENDER 
 

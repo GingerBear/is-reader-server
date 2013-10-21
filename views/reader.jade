@@ -76,8 +76,8 @@ html.no-js
       var page;
       $.ajax({
       type: 'GET',
-      //url: "http://is-reader.herokuapp.com/book/" + book_id,
-      url: "http://localhost:3000/book/" + book_id,
+      url: "http://is-reader.herokuapp.com/book/" + book_id,
+      //url: "http://localhost:3000/book/" + book_id,
       dataType: 'json',
       success: function(data){
       console.log(data);
