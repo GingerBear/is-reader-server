@@ -58,8 +58,8 @@ block content
     console.log(data);
     $.ajax({
     type: 'POST',
-    //url: "http://is-reader.herokuapp.com/book/" + book_id,
-    url: "http://localhost:3000/user/signup",
+    url: "http://is-reader.herokuapp.com/user/signup",
+    //url: "http://localhost:3000/user/signup",
     dataType: 'json',
     data: data,
     success: function(data){
