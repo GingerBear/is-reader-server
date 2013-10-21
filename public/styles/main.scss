@@ -756,7 +756,8 @@ $icon-font-path: "/bower_components/sass-bootstrap/fonts/";
 }
 
 .hl-text {
-    background-color: rgba(255,225,0,0.5);
+    /*background-color: rgba(255,225,0,0.5);*/
+    border-bottom: 1px solid #999;
 }
 
 

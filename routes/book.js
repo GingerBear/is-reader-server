@@ -11,9 +11,7 @@ var UserModel = user.model;
 var UserBookModel = user_book.model;
 
 exports.listUserBook = function(req, res){
-    console.log(req.cookies);
-    console.log(req.cookies.id);
-  return UserBookModel.find({user_id: req.cookies.id}, function (err, user_books) {
+  return UserBookModel.find({user_id: req.cookies.user_id}, function (err, user_books) {
     console.log(user_books);
     var book_ids = [];
     for (var i = user_books.length - 1; i >= 0; i--) {
@@ -48,22 +46,24 @@ exports.list = function(req, res){
 exports.restore = function(req, res){
   return BookModel.findById(req.params.id, function (err, book) {
     if (!err) {
-      return UserBookModel.find({book_id: book._id, user_id: req.cookies.id}, function (err, userBook) {
-        book.last_page = userBook[0].last_page;
+      return UserBookModel.find({book_id: book._id, user_id: req.cookies.user_id}, function (err, userBook) {
+        var bookOjb = book.toObject();
+        bookOjb.last_page = userBook[0].last_page;
+        console.log(bookOjb);
         if (!err) {
-          return res.jsonp(book);
+          return res.json(bookOjb);
         } else {
-          return res.jsonp(false);
+          return res.json(false);
         }
       });
     } else {
-      return res.jsonp({ empty: true });
+      return res.json({ empty: true });
     }
   });
 };
 
 exports.save = function(req, res){
-  return UserBookModel.findOne({book_id: req.params.id, user_id: req.cookies.id}, function (err, user_book) {
+  return UserBookModel.findOne({book_id: req.params.id, user_id: req.cookies.user_id}, function (err, user_book) {
     console.log(user_book);
     user_book.last_page = req.body.last_page;
     return user_book.save(function (err) {
@@ -91,17 +91,42 @@ exports.remove = function(req, res){
 };
 
 exports.add = function(req, res){
+  exports.addBook(req.body.title, req.body.file_name, function(id, err) {
+    return res.send(book);
+  });
+};
+
+exports.addBook = function(title, file_name, fn) {
   var book = new BookModel({
-    title: req.body.title,  
-    file_name: req.body.file_name,
-    last_page: 0
+    title: title,  
+    file_name: file_name
   });
   book.save(function (err) {
     if (!err) {
-      return console.log("Book added");
+      if (fn) fn(book._id, err);
+      console.log("Book added");
     } else {
-      return console.log(err);
+      if (fn) fn(book._id, err);
+      console.log(err);
     }
   });
-  return res.send(book);
-};
+
+}
+
+exports.addUserBook = function(user_id, book_id, fn) {
+  var userbook = new UserBookModel({
+    user_id: user_id,  
+    book_id: book_id,  
+    last_page: 1
+  });
+  userbook.save(function (err) {
+    if (!err) {
+      if (fn) fn(userbook._id, err);
+      console.log("User Book added");
+    } else {
+      if (fn) fn(userbook._id, err);
+      console.log("add user book err: " + err);
+    }
+  });
+
+}

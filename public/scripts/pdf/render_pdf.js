@@ -1,10 +1,10 @@
 // ISReader PDF Reader, Based on pdf.js
 // 
 // render a page of a pdf file, append hightlights and notes,
-// send new highlights and notes to server, track reading 
+// send new notes and notes to server, track reading 
 // progress.
 // 
-// Input: page, highlights objects, notes objects
+// Input: page, notes objects, notes objects
 // Author: Neil Ding
 
 var LoadPage = function () {
@@ -14,7 +14,7 @@ var LoadPage = function () {
     , book_id = args.shift()
     , pdfData = 'data/pdf/' + file_name // should read from URL or DOM
     , scale = 2 // Set this to whatever you want. This is basically the "zoom" factor for the PDF.
-    , highlights = [] // fill hights of current page by server
+    , notes = [] // fill hights of current page by server
     , pdf // store pdf file into a locally global variable 
     , selectionPosition
     // , base_url = "http://is-reader.herokuapp.com/";
@@ -97,12 +97,12 @@ var LoadPage = function () {
 
             page.render(renderContext).then(function(){      
 
-                // after page rendered, fill the highlights and notes. 
+                // after page rendered, fill the notes and notes. 
                 // Currently by a pre loaded global variable.
                 // To fix, a ajax function should be called to get the real highlight and notes data from server.
 
-                for (var i = highlights.length - 1; i >= 0; i--) {
-                    hlByOffset(highlights[i].startContainer, highlights[i].endContainer, highlights[i].startOffset, highlights[i].endOffest);
+                for (var i = notes.length - 1; i >= 0; i--) {
+                    hlByOffset(notes[i].startContainer, notes[i].endContainer, notes[i].startOffset, notes[i].endOffest);
                 };
 
             });
@@ -167,10 +167,10 @@ var LoadPage = function () {
         return selection;
     }
 
-    var parseHL = function(notes) {
-        for (var i = notes.length - 1; i >= 0; i--) {
-            var pos = notes[i].position.split(',');;
-            highlights.push({                
+    var parseHL = function(data) {
+        for (var i = data.length - 1; i >= 0; i--) {
+            var pos = data[i].position.split(',');;
+            notes.push({                
                 startContainer : pos[0], 
                 endContainer : pos[1], 
                 startOffset : pos[2], 
@@ -179,15 +179,17 @@ var LoadPage = function () {
         };
     };
 
-    var loadNotes = function(page, callback) {
+    var loadNotes = function(page, fn) {
         $.ajax({
             type: 'GET',
-            //url: "http://is-reader.herokuapp.com/book/" + book_id,
             url: base_url + 'book/' + book_id + "/" + page,
-            dataType: 'jsonp',
+            dataType: 'json',
             success: function(data){
+                console.log("notes: " + base_url + 'book/' + book_id + "/" + page);
+                notes = [];
                 parseHL(data);
-                if (callback) callback();
+                console.log(notes);
+                if (fn) fn(data);
             }
         });
         return this;
@@ -208,12 +210,16 @@ var LoadPage = function () {
         }
         return function (startContainer, endContainer, startOffset, endOffest) {
             console.log(startContainer + ' |' + endContainer + ' |' + startOffset + ' |' + endOffest);
-            wrapByOffset(getEleByIndex(startContainer), startOffset, undefined);
-            wrapByOffset(getEleByIndex(endContainer), undefined, endOffest);
-            for (var i = parseInt(startContainer) + 1; i < parseInt(endContainer); i++) {
-                console.log(i);
-                wrapByOffset(getEleByIndex(i), undefined, undefined);
-            };
+            if (startContainer === endContainer) {
+                wrapByOffset(getEleByIndex(startContainer), startOffset, endOffest);
+            }else{                
+                wrapByOffset(getEleByIndex(startContainer), startOffset, undefined);
+                wrapByOffset(getEleByIndex(endContainer), undefined, endOffest);
+                for (var i = parseInt(startContainer) + 1; i < parseInt(endContainer); i++) {
+                    console.log(i);
+                    wrapByOffset(getEleByIndex(i), undefined, undefined);
+                };
+            }
         }
     })();
 
@@ -223,7 +229,6 @@ var LoadPage = function () {
             url: base_url + "note",
             data: {
                 book_id: book_id,
-                user_id: 'Neil',
                 page: page,
                 position: selectionPosition,
                 is_hightlight: ifHighlight,
@@ -240,7 +245,6 @@ var LoadPage = function () {
 
     $('.next-page').click(function () {
         page = page + 1;
-        highlights = [];
         pageGoto(page);
         // code : track progross to server
 
@@ -248,14 +252,13 @@ var LoadPage = function () {
 
     $('.pre-page').click(function () {
         page = page - 1;
-        highlights = [];
         pageGoto(page);
 
         // code : track progross to server
 
     });
 
-    $(document).keypress(function( e ) {
+    $(window).keydown(function( e ) {
         if ( e.keyCode == 37 ) {
             e.preventDefault();
             $('.pre-page').click();
@@ -324,7 +327,7 @@ var LoadPage = function () {
     return {
 
         loadHL: function (p, startContainer, endContainer, startOffset, endOffest) {
-            highlights[0] = {
+            notes[0] = {
                 page : page-1, 
                 startContainer : startContainer, 
                 endContainer : endContainer, 

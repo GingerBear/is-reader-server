@@ -1,8 +1,24 @@
-doctype 5
-html
+!!! 5
+html.no-js
+//
+    <![endif]
   head
-    title= title
-    link(rel='stylesheet', href='/css/style.css')
-    script(src='http://localhost:35729/livereload.js')
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    title is reader
+    meta(name='description', content='')
+    meta(name='viewport', content='width=device-width')
+    //
+       Place favicon.ico and apple-touch-icon.png in the root directory 
+    //
+       build:css(.tmp) styles/main.css 
+    link(rel='stylesheet', href='styles/main.css')
+    //
+       endbuild 
+    //
+       build:js scripts/vendor/modernizr.js 
+    script(src='bower_components/modernizr/modernizr.js')
+    //
+       endbuild 
   body
     block content

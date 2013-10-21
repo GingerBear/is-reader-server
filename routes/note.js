@@ -8,7 +8,7 @@ var NoteModel = note.model;
 
 exports.addNote = function(req, res){
   var note = new NoteModel({
-    user_id: req.body.user_id,
+    user_id: req.cookies.user_id,
     book_id: req.body.book_id,
     page: req.body.page,
     position: req.body.position,
@@ -26,7 +26,7 @@ exports.addNote = function(req, res){
 };
 
 exports.fetchNotes = function(req, res){
-  return NoteModel.find({book_id: req.params.id, page: req.params.page}, function (err, notes) {
+  return NoteModel.find({book_id: req.params.id, page: req.params.page, user_id: req.cookies.user_id}, function (err, notes) {
     console.log(notes);
     if (!err) {
       return res.jsonp(notes);
