@@ -45,7 +45,7 @@ app.get('/books', function(req, res){
   if (req.cookies.rememberme) {
     res.render('books'); 
   }else{
-    res.redirect('logout'); 
+    res.redirect('/logout'); 
   }
 });
 
@@ -74,7 +74,7 @@ app.get('/reader', function(req, res){
   if (req.cookies.rememberme) {
     res.render('reader');
   }else{
-    res.render('login'); 
+    res.redirect('/logout'); 
   }
 });
 
