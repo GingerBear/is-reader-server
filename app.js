@@ -84,7 +84,10 @@ app.post('/upload', function(req, res){
         fs.readFile(file.path, function (err, data) {
           if (!err) {            
             var fileName = Date.now() + ".pdf";
-            var newPath = __dirname + "\\public\\data\\pdf\\" + fileName;
+            // for windows
+            //var newPath = __dirname + "\\public\\data\\pdf\\" + fileName;
+            // for linux
+            var newPath = __dirname + "/public/data/pdf/" + fileName;
             fs.writeFile(newPath, data, function (err) {
               if (!err) {
                 console.log(file.name.split('.')[0] +" :: "+ fileName);
