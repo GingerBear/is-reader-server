@@ -48,10 +48,10 @@ exports.signup = function(req, res){
       });
       return user.save(function (err, user) {
         if (!err) {
-          res.cookie('rememberme', '1', { maxAge: 900000, httpOnly: false });
-          res.cookie('user_id', users._id+'', { maxAge: 900000, httpOnly: false });
-          res.cookie('username', user.username, { maxAge: 900000, httpOnly: false });
-          res.cookie('email', user.email, { maxAge: 900000, httpOnly: false });
+          res.cookie('rememberme', '1', { maxAge: 1000*60*60*24*30, httpOnly: false });
+          res.cookie('user_id', users._id+'', { maxAge: 1000*60*60*24*30, httpOnly: false });
+          res.cookie('username', user.username, { maxAge: 1000*60*60*24*30, httpOnly: false });
+          res.cookie('email', user.email, { maxAge: 1000*60*60*24*30, httpOnly: false });
           return res.jsonp({ success: true });
         } else {
           return res.jsonp({ success: false });

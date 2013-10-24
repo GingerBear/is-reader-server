@@ -63,7 +63,7 @@ block content
     $('.book-list').html("Loading...");
     $.ajax({
     type: 'GET',
-    url: "http://is-reader.herokuapp.com/book_list",
+    url: "/book_list",
     //url: "http://localhost:3000/book_list",
     dataType: 'json',
     success: function(data){
