@@ -44,16 +44,28 @@ var LoadPage = function () {
         //Set the canvas height and width to the height and width of the viewport
         var canvas = $canvas.get(0);
         var context = canvas.getContext("2d");
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+        var devicePixelRatio = window.devicePixelRatio || 1;
+        canvas.height = viewport.height * devicePixelRatio;
+        canvas.width = viewport.width * devicePixelRatio;
 
         //Append the canvas to the pdf container div
         var $pdfContainer = jQuery("#pdfContainer");
-        $pdfContainer.css("height", canvas.height + "px").css("width", canvas.width + "px");
-        $pdfContainer.append($canvas);
+        $pdfContainer.css("height", (canvas.height/devicePixelRatio) + "px").css("width", (canvas.width/devicePixelRatio) + "px");
+        $pdfContainer.append($('<div class="reader-notes-div"></div>')).append($canvas);
 
         //The following few lines of code set up scaling on the context if we are on a HiDPI display
         var outputScale = getOutputScale();
+
+        var canvasOffset = $canvas.offset();
+        var $textLayerDiv = jQuery("<div />")
+            .addClass("textLayer")
+            .css("height", (viewport.height * devicePixelRatio) + "px")
+            .css("width", (viewport.width * devicePixelRatio) + "px");
+            // .offset({
+            //     top: canvasOffset.top,
+            //     left: canvasOffset.left
+            // });
+
         if (outputScale.scaled) {
             var cssScale = 'scale(' + (1 / outputScale.sx) + ', ' +
                 (1 / outputScale.sy) + ')';
@@ -71,16 +83,6 @@ var LoadPage = function () {
         if (outputScale.scaled) {
             context.scale(outputScale.sx, outputScale.sy);
         }
-
-        var canvasOffset = $canvas.offset();
-        var $textLayerDiv = jQuery("<div />")
-            .addClass("textLayer")
-            .css("height", viewport.height + "px")
-            .css("width", viewport.width + "px");
-            // .offset({
-            //     top: canvasOffset.top,
-            //     left: canvasOffset.left
-            // });
 
         $pdfContainer.append($textLayerDiv);
 
