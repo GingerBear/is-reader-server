@@ -6,7 +6,8 @@ var Note = new Schema({
     book_id: { type: String, required: true },  
     page: { type: Number, required: true }, 
     position: { type: String, required: true },  // format: first_div,last_div,first_offset,last_offset
-    is_hightlight: { type: Boolean, required: true },  
-    notes: { type: String, required: false }
+    is_mark: { type: Boolean, required: true }, 
+    is_private: { type: Boolean, required: true },  
+    note: { type: String, required: false }
 });
 exports.model = db.mongoose.model('note', Note);

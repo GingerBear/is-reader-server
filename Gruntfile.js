@@ -12,6 +12,13 @@ module.exports = function (grunt) {
         file: 'app.js'
       }
     },
+    sass: {
+      dist: {
+        files: {
+          'public/styles/main.css' : 'public/styles/main.scss'
+        }
+      }
+    },
     watch: {
       options: {
         nospawn: true,
@@ -20,7 +27,9 @@ module.exports = function (grunt) {
       server: {
         files: [
           'app.js',
-          'routes/*.js'
+          'routes/*.js',
+          'models/*.js',
+          'config/*.js'
         ],
         tasks: ['develop', 'delayed-livereload']
       },
@@ -31,7 +40,8 @@ module.exports = function (grunt) {
         }
       },
       css: {
-        files: ['public/css/*.css'],
+        files: ['public/styles/*.scss'],
+        tasks: ['sass:dist'],
         options: {
           livereload: reloadPort
         }
@@ -65,6 +75,7 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-develop');
+  grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('default', ['develop', 'watch']);

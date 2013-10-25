@@ -12,8 +12,9 @@ exports.addNote = function(req, res){
     book_id: req.body.book_id,
     page: req.body.page,
     position: req.body.position,
-    is_hightlight: req.body.position,
-    notes: req.body.notes
+    is_mark: req.body.is_mark,
+    is_private: req.body.is_private,
+    note: req.body.note
   });
   note.save(function (err) {
     if (!err) {

@@ -102,7 +102,7 @@ var LoadPage = function () {
                 // To fix, a ajax function should be called to get the real highlight and notes data from server.
 
                 for (var i = notes.length - 1; i >= 0; i--) {
-                    hlByOffset(notes[i].startContainer, notes[i].endContainer, notes[i].startOffset, notes[i].endOffest);
+                    renderNote(notes[i].startContainer, notes[i].endContainer, notes[i].startOffset, notes[i].endOffest, notes[i].note);
                 };
 
             });
@@ -138,6 +138,8 @@ var LoadPage = function () {
             opacity: 0
         }, 100, function() {
             $(this).addClass('hidden');
+            $('.tool-pop .tools-list').removeClass('hidden');
+            $('.tool-pop .note-text-area').addClass('hidden');
         });
     }
 
@@ -167,10 +169,11 @@ var LoadPage = function () {
         return selection;
     }
 
-    var parseHL = function(data) {
+    var parseNote = function(data) {
         for (var i = data.length - 1; i >= 0; i--) {
             var pos = data[i].position.split(',');;
-            notes.push({                
+            notes.push({
+                note : data[i].note, 
                 startContainer : pos[0], 
                 endContainer : pos[1], 
                 startOffset : pos[2], 
@@ -187,7 +190,7 @@ var LoadPage = function () {
             success: function(data){
                 console.log("notes: " + base_url + 'book/' + book_id + "/" + page);
                 notes = [];
-                parseHL(data);
+                parseNote(data);
                 console.log(notes);
                 if (fn) fn(data);
             }
@@ -195,7 +198,7 @@ var LoadPage = function () {
         return this;
     };
 
-    var hlByOffset = (function () {
+    var renderNote = (function () {
         var commonContainer = ".textLayer";
         var getEleByIndex = function (container) {
             return $(commonContainer + ' div:eq(' + container + ')')
@@ -208,8 +211,9 @@ var LoadPage = function () {
             // console.log(to); 
             $el.html($el.html().substring(0, from) + "<span class='hl-text'>" + $el.html().substring(from, to) + "</span>" + $el.html().substring(to));
         }
-        return function (startContainer, endContainer, startOffset, endOffest) {
+        return function (startContainer, endContainer, startOffset, endOffest, note) {
             console.log(startContainer + ' |' + endContainer + ' |' + startOffset + ' |' + endOffest);
+            // render underscore of the note
             if (startContainer === endContainer) {
                 wrapByOffset(getEleByIndex(startContainer), startOffset, endOffest);
             }else{                
@@ -220,25 +224,49 @@ var LoadPage = function () {
                     wrapByOffset(getEleByIndex(i), undefined, undefined);
                 };
             }
+            // render text of the note
+            if (note) appendNoteText(note, getEleByIndex(startContainer));
         }
     })();
 
-    var saveNote = function (ifHighlight, notes, callback) {
+    var appendNoteText = function(text, relativeEl) {
+        var html = '<div class="note-div"><button class="btn btn-xs btn-default btn-show-note-text">'
+                 + '<span class="glyphicon glyphicon-comment"></span>'
+                 + '</button><p class="note-text hidden">'+text+'</p>'
+                 + '</div>';
+        $(html)
+        .appendTo($('.reader-notes-div'))
+        .css({
+            top: relativeEl.offset().top
+        })
+        .find('.btn-show-note-text')
+        .on('click', function(){
+            var text = $(this).siblings('.note-text');
+            if (text.is('.hidden'))
+                text.removeClass('hidden');
+            else
+                text.addClass('hidden');
+        });
+        console.log(text+" rendered");
+    }
+
+    var saveNote = function (note, ifMark, ifPrivate, fn) {
         $.ajax({
             type: 'POST',
             url: base_url + "note",
             data: {
                 book_id: book_id,
                 page: page,
-                position: selectionPosition,
-                is_hightlight: ifHighlight,
-                notes: notes || ''
+                position: selectionPosition, // global variable 
+                is_mark: ifMark,
+                is_private: ifPrivate,
+                note: note || ''
             },
             dataType: 'json',
             success: function(data){
                 var pos = selectionPosition.split(',');
-                hlByOffset(pos[0], pos[1], pos[2], pos[3])
-                if (callback) callback();
+                renderNote(pos[0], pos[1], pos[2], pos[3], note)
+                if (fn) fn();
             }
         });
     };
@@ -291,8 +319,18 @@ var LoadPage = function () {
         }
     });
 
+    $('#pdfContainer .reader-notes-div').on('mouseup', function(e) {
+        e.stopPropagation;
+        hideToolPop();
+    });
+
     // remove pop-up
     $(document.body).on('mousedown', function() {
+        hideToolPop();
+    });
+
+    $('#pdfContainer .textLayer').on('mousedown', function(e) {
+        e.stopPropagation();    
         // clear text selection
         if (window.getSelection()) {
             // for non-IE
@@ -304,21 +342,34 @@ var LoadPage = function () {
         hideToolPop();
     });
 
+
     // prevent remove pop-up when click on pop-up
     $('.tool-pop').on('mousedown click', function(e) {
         e.stopPropagation();    
     });
 
-    $('.tool-pop ul').click(function(e) {
+    $('.tool-pop .tools-list').click(function(e) {
         e.preventDefault();
-        hideToolPop();
         var target = $(e.target);
         if (target.is('.hl-btn')) {
-            saveNote(true, '', function (argument) {
-                console.log('HL Saved!');
+            saveNote('', true, false, function () {
+                console.log('Mark Saved!');
+                hideToolPop()
             });
         } else if (target.is('.note-btn')) {
-            alert('note');
+            $(this).addClass('hidden');
+            var inputAreaDiv = $(this).siblings('.note-text-area');
+            inputAreaDiv.removeClass('hidden').find('.note-text').focus();
+            // bind save event
+            inputAreaDiv.find('.note-save-btn').on('click', function(){
+                var noteText = $(this).parent().parent().find('.note-text').val().trim();
+                var ifPrivate = $(this).parent().parent().find('#if-private').is(":checked");
+                console.log(noteText + ', ' + ifPrivate);
+                saveNote(noteText, false, ifPrivate, function () {
+                    console.log('Note Saved!');
+                    hideToolPop()
+                });
+            });
         } else if (target.is('.share-btn')) {
             alert('share');
         }

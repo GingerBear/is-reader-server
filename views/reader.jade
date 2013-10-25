@@ -42,8 +42,9 @@ html.no-js
               a.btn.btn-default.next-page
                 span.glyphicon.glyphicon-chevron-right
         #pdfContainer.pdf-content
+          .reader-notes-div
     .tool-pop.hidden
-      ul
+      ul.tools-list
         li
           a.hl-btn.pop-btn(href='')
             span.glyphicon.glyphicon-pencil
@@ -56,6 +57,12 @@ html.no-js
           a.share-btn.pop-btn(href='')
             span.glyphicon.glyphicon-share
             | &nbsp;Share
+      div.note-text-area.hidden
+        textarea.note-text(type='inputarea',rows='5',cols='40')
+        p
+          input#if-private(name='if-private',type='checkbox')
+          label(for='if-private') Private
+          button.pull-right.btn.btn-sm.btn-default.note-save-btn Save
     //
        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> 
     //

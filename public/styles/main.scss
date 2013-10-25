@@ -1,6 +1,6 @@
-$icon-font-path: "/bower_components/sass-bootstrap/fonts/";
+$icon-font-path: "../bower_components/sass-bootstrap/fonts/";
 
-@import 'sass-bootstrap/lib/bootstrap';
+@import '../bower_components/sass-bootstrap/lib/bootstrap';
 
 
 /* ==========================================================================
@@ -661,6 +661,7 @@ $icon-font-path: "/bower_components/sass-bootstrap/fonts/";
     margin-top: 0;
 }
 
+
 /* ==========================================================================
    PDF Reader
    ========================================================================== */
@@ -757,9 +758,33 @@ $icon-font-path: "/bower_components/sass-bootstrap/fonts/";
 
 .hl-text {
     /*background-color: rgba(255,225,0,0.5);*/
-    border-bottom: 1px solid #999;
+    border-bottom: 2px solid #999;
+    padding-bottom: 5px;
 }
 
+.note-text-area {
+    padding: 8px;
+}  
+
+.note-div {
+    margin-top: 5px;
+    position: absolute; 
+    right: 108px;
+    color: #000;
+    font: 11px 'arial';
+    z-index: 101;
+}
+
+.note-div .note-text{
+    position: absolute; 
+    width: 130px;
+    z-index: 102;
+}
+.note-div button span{
+    color: #ccc; 
+    z-index: 101;
+}
+ 
 
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
