@@ -17,7 +17,8 @@ var LoadPage = function () {
     , notes = [] // fill hights of current page by server
     , pdf // store pdf file into a locally global variable 
     , selectionPosition
-    , base_url = "/";
+    , base_url = "/"
+    , totalPageNum = 0;
     //, base_url = "http://localhost:3000/";
 
     // RENDER 
@@ -25,15 +26,25 @@ var LoadPage = function () {
 
     // load the pdf file the first time loaded.
     function loadPdf(pdfData) {
-        PDFJS.disableWorker = true; //Not using web workers. Not disabling results in an error. This line is
+        //PDFJS.disableWorker = true; //Not using web workers. Not disabling results in an error. This line is
         //missing in the example code for rendering a pdf.
         pdf = PDFJS.getDocument(pdfData);
+        pdf.then(function(pdfDoc){
+            totalPageNum = pdfDoc.numPages;
+        });
         pdf.then(renderPdf);
     }
 
     // render a page of pdf file, can only used by then(). will be called when goes to a new page
     function renderPdf(pdf) {
-        pdf.getPage(page).then(renderPage);
+        console.log(page);
+        if (page < 1) {
+            pdf.getPage(1).then(renderPage);
+        } else if (page > totalPageNum) {
+            pdf.getPage(totalPageNum).then(renderPage);
+        } else {
+            pdf.getPage(page).then(renderPage);
+        }
     }
 
     // render each page
@@ -273,19 +284,66 @@ var LoadPage = function () {
         });
     };
 
-    $('.next-page').click(function () {
-        page = page + 1;
-        pageGoto(page);
-        // code : track progross to server
+    var fetchNoteList = function(fn) {
+        $.ajax({
+            type: 'GET',
+            url: base_url + 'note_list/' + book_id,
+            dataType: 'json',
+            success: function(data){
+                // sort by page
+                data.sort(function(a,b){
+                    return a.page > b.page ? 1 : -1;
+                });
+                if (data.length > 0) {
+                    for (var i = data.length - 1; i >= 0; i--) {
+                        $('.note-list').append($('<li><b>'+data[i].page+'</b><p class="note-text-p">'+(data[i].note || '[Mark]')+'</p></li>'));
+                    };
+                }else{
+                    $('.note-list').append($('<li>No Notes</li>'))
+                }
+                $('.note-list').on('click', function(e) {
+                    var target = $(e.target);
+                    if (target.is('.note-text-p')) {
+                        var page = parseInt(target.siblings('b').text());
+                        pageGoto(page);
+                    }
+                });
+                $('.close-note-list-div').on('click', function(){
+                    $('.note-list-div').addClass('hidden');
+                });
+                if (fn) fn(data);
+            }
+        });
+        return this;
+    }
 
+    // use event delegation
+
+    $('.nav-btn-div').on('click', function(e){
+        var target = $(e.target);
+        if (target.is('.next-page') || target.is('.next-page span')){
+            page = page + 1;
+            pageGoto(page);
+        } else if (target.is('.pre-page') || target.is('.pre-page span')) {
+            page = page - 1;
+            pageGoto(page);
+        }
     });
 
-    $('.pre-page').click(function () {
-        page = page - 1;
-        pageGoto(page);
-
-        // code : track progross to server
-
+    $('.panel-tool-div').on('click', function(e){
+        var target = $(e.target);
+        if (target.is('.menu-btn')){
+            page = page + 1;
+            pageGoto(page);
+        } else if (target.is('.notes-list-btn') || target.is('.notes-list-btn span')) {
+            console.log('Show note list');
+            if ($('.note-list-div').is('.hidden')){
+                $('.note-list-div').removeClass('hidden');
+            } else {
+                $('.note-list-div').addClass('hidden');
+            }
+            
+        }
     });
 
     $(window).keydown(function( e ) {
@@ -379,18 +437,6 @@ var LoadPage = function () {
 
     return {
 
-        loadHL: function (p, startContainer, endContainer, startOffset, endOffest) {
-            notes[0] = {
-                page : page-1, 
-                startContainer : startContainer, 
-                endContainer : endContainer, 
-                startOffset : startOffset, 
-                endOffest : endOffest
-            };
-
-            pageGoto(p);
-        },
-
         pageGoto: function(p) {
             pageGoto(p);
         },
@@ -404,7 +450,8 @@ var LoadPage = function () {
 
         init: function() {            
             loadNotes(page, function() {
-                loadPdf(pdfData);            
+                loadPdf(pdfData);   
+                fetchNoteList();         
             });    
         }
     }

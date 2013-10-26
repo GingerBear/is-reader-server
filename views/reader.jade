@@ -32,15 +32,19 @@ html.no-js
         .reader-panel-div
           .fixed-panel-div
             .panel-tool-div
-              a.btn.btn-default(title='Menu')
+              a.btn.btn-default(title='Menu').menu-btn
                 span.glyphicon.glyphicon-list
-              a.btn.btn-default(title='Notes and Marks')
+              a.btn.btn-default(title='Notes and Marks').notes-list-btn
                 span.glyphicon.glyphicon-pencil
             .nav-btn-div
               a.btn.btn-default.pre-page
                 span.glyphicon.glyphicon-chevron-left
               a.btn.btn-default.next-page
                 span.glyphicon.glyphicon-chevron-right
+            .note-list-div.hidden
+              h4 Note List
+                span.close-note-list-div X
+              ul.note-list
         #pdfContainer.pdf-content
         //  .reader-notes-div
     .tool-pop.hidden

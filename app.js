@@ -122,11 +122,11 @@ app.post('/upload', function(req, res){
   }
 });
 
+// For Cross Domain Issue
+// app.all('/book/:id', cors);
+// app.all('/note', cors);
 
 // BOOK
-app.all('/book/:id', cors);
-app.all('/note', cors);
-
 app.get('/book_list', book.listUserBook);
 app.get('/book/:id', book.restore);
 app.put('/book/:id', book.save);
@@ -135,6 +135,7 @@ app.post('/book', book.add);
 
 // NOTE
 app.get('/book/:id/:page', note.fetchNotes);
+app.get('/note_list/:id', note.fetchNoteList);
 app.post('/note', note.addNote);
 
 // USER
