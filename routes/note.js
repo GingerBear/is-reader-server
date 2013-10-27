@@ -26,6 +26,16 @@ exports.addNote = function(req, res){
   return res.send(note);
 };
 
+exports.deleteNote= function(req, res){
+  return NoteModel.findByIdAndRemove(req.body.note_id, function(err){
+    if (!err) {
+      return res.json({success: true});
+    } else {
+      return res.json({success: false});
+    }
+  });
+};
+
 exports.fetchNotes = function(req, res){
   return NoteModel.find({book_id: req.params.id, page: req.params.page, user_id: req.cookies.user_id}, function (err, notes) {
     //console.log(notes);

@@ -122,6 +122,13 @@ var LoadPage = function () {
         });
     }
 
+    function refreshPage() {
+        $("#pdfContainer").html("");
+        $("html, body").animate({ scrollTop: 0 }, 0);
+        pdf.then(renderPdf);     
+        return this;
+    }
+
     function saveProgress(page) {
         $.ajax({
             type: 'PUT',
@@ -212,11 +219,11 @@ var LoadPage = function () {
     };
 
     var renderNote = (function () {
-        var commonContainer = ".textLayer";
-        var getEleByIndex = function (container) {
-            return $(commonContainer + ' div:eq(' + container + ')')
+        var _commonContainer = ".textLayer";
+        var _getEleByIndex = function (container) {
+            return $(_commonContainer + ' div:eq(' + container + ')')
         }
-        var wrapByOffset = function ($el, from, to, wrapperTag) {
+        var _wrapByOffset = function ($el, from, to, wrapperTag) {
             var len = $el.html().length || 0;
             from = from || 0;
             to = to || len;
@@ -228,17 +235,17 @@ var LoadPage = function () {
             console.log(startContainer + ' |' + endContainer + ' |' + startOffset + ' |' + endOffest);
             // render underscore of the note
             if (startContainer === endContainer) {
-                wrapByOffset(getEleByIndex(startContainer), startOffset, endOffest);
+                _wrapByOffset(_getEleByIndex(startContainer), startOffset, endOffest);
             }else{                
-                wrapByOffset(getEleByIndex(startContainer), startOffset, undefined);
-                wrapByOffset(getEleByIndex(endContainer), undefined, endOffest);
+                _wrapByOffset(_getEleByIndex(startContainer), startOffset, undefined);
+                _wrapByOffset(_getEleByIndex(endContainer), undefined, endOffest);
                 for (var i = parseInt(startContainer) + 1; i < parseInt(endContainer); i++) {
                     console.log(i);
-                    wrapByOffset(getEleByIndex(i), undefined, undefined);
+                    _wrapByOffset(_getEleByIndex(i), undefined, undefined);
                 };
             }
             // render text of the note
-            if (note) appendNoteText(note, getEleByIndex(startContainer));
+            if (note) appendNoteText(note, _getEleByIndex(startContainer));
         }
     })();
 
@@ -277,6 +284,7 @@ var LoadPage = function () {
             },
             dataType: 'json',
             success: function(data){
+                fetchNoteList();
                 var pos = selectionPosition.split(',');
                 renderNote(pos[0], pos[1], pos[2], pos[3], note)
                 if (fn) fn();
@@ -284,19 +292,42 @@ var LoadPage = function () {
         });
     };
 
+    var deleteNote = function (id ,fn) {
+        $.ajax({
+            type: 'DELETE',
+            url: base_url + "note",
+            data: {
+                note_id: id
+            },
+            dataType: 'json',
+            success: function(data){
+                if (data.success) {
+                    if (fn) fn();
+                }else{
+                    console.log('Something wrong: Cannot Delete Note.');
+                }
+            }
+        });
+    }
+
     var fetchNoteList = function(fn) {
+        $('.note-list').html('');
         $.ajax({
             type: 'GET',
             url: base_url + 'note_list/' + book_id,
             dataType: 'json',
             success: function(data){
                 // sort by page
+                console.log(data);
                 data.sort(function(a,b){
                     return a.page > b.page ? 1 : -1;
                 });
                 if (data.length > 0) {
                     for (var i = data.length - 1; i >= 0; i--) {
-                        $('.note-list').append($('<li><b>'+data[i].page+'</b><p class="note-text-p">'+(data[i].note || '[Mark]')+'</p></li>'));
+                        $('.note-list').append($('<li data-id="'+data[i]._id+'"><b>'+data[i].page+'</b>'
+                        + '<span class="del-note-btn"><span class="glyphicon '
+                        + 'glyphicon-remove-circle"></span></span><p class="note-text-p">'
+                        + (data[i].note || '[Mark]')+'</p></li>'));
                     };
                 }else{
                     $('.note-list').append($('<li>No Notes</li>'))
@@ -309,7 +340,21 @@ var LoadPage = function () {
                     }
                 });
                 $('.close-note-list-div').on('click', function(){
-                    $('.note-list-div').addClass('hidden');
+                    $('.note-list-div').animate({
+                        right: "-=10",
+                        opacity: 0.5
+                    }, 100, function(){
+                        $(this).addClass('hidden');
+                    });
+                });
+                $('.del-note-btn').on('click', function(){
+                    var id = $(this).parent().data('id');
+                    console.log(id);
+                    deleteNote(id, $.proxy(function(){
+                        $(this).slideUp(100, function(){
+                            $(this).remove();
+                        });
+                    }, $(this).parent()));
                 });
                 if (fn) fn(data);
             }
@@ -338,9 +383,17 @@ var LoadPage = function () {
         } else if (target.is('.notes-list-btn') || target.is('.notes-list-btn span')) {
             console.log('Show note list');
             if ($('.note-list-div').is('.hidden')){
-                $('.note-list-div').removeClass('hidden');
+                $('.note-list-div').removeClass('hidden').animate({
+                    right: "+=10",
+                    opacity: 1
+                }, 100);
             } else {
-                $('.note-list-div').addClass('hidden');
+                $('.note-list-div').animate({
+                    right: "-=10",
+                    opacity: 0.5
+                }, 100, function(){
+                    $(this).addClass('hidden');
+                });
             }
             
         }
@@ -431,7 +484,7 @@ var LoadPage = function () {
                 });
             });
         } else if (target.is('.share-btn')) {
-            alert('share');
+            alert('share is building');
         }
     });
 
@@ -442,10 +495,7 @@ var LoadPage = function () {
         },
 
         refresh: function() {
-            $("#pdfContainer").html("");
-            $("html, body").animate({ scrollTop: 0 }, 0);
-            pdf.then(renderPdf);     
-            return this;
+            refreshPage();
         },
 
         init: function() {            

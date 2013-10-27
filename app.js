@@ -137,6 +137,7 @@ app.post('/book', book.add);
 app.get('/book/:id/:page', note.fetchNotes);
 app.get('/note_list/:id', note.fetchNoteList);
 app.post('/note', note.addNote);
+app.delete('/note', note.deleteNote);
 
 // USER
 app.post('/user/signup', user.signup);

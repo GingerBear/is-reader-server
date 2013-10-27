@@ -5509,7 +5509,7 @@ td.visible-print {
 
 .hl-text {
   /*background-color: rgba(255,225,0,0.5);*/
-  border-bottom: 2px solid #999;
+  border-bottom: 3px solid #555;
   padding-bottom: 5px; }
 
 .note-text-area {
@@ -5533,7 +5533,7 @@ td.visible-print {
 .note-list-div {
   position: absolute;
   top: 5px;
-  right: 55px;
+  right: 45px;
   background-color: #fff;
   border: 1px solid #ccc;
   padding: 5px;
@@ -5555,10 +5555,13 @@ td.visible-print {
 
 ul.note-list {
   list-style: none;
-  padding: 0; }
+  padding: 0;
+  height: 500px;
+  overflow-y: scroll; }
 
 ul.note-list li {
-  padding: 3px; }
+  padding: 3px;
+  overflow: hidden; }
 
 ul.note-list li:hover {
   cursor: pointer;
@@ -5570,10 +5573,29 @@ ul.note-list li b {
   color: #999;
   font-weight: normal; }
 
+ul.note-list li .del-note-btn {
+  float: right;
+  font-size: 11px;
+  color: #999;
+  font-weight: normal; }
+
+ul.note-list li .del-note-btn:hover {
+  color: #dd4b39; }
+
 ul.note-list li p {
-  margin-left: 20px;
+  margin-left: 25px;
+  margin-right: 15px;
   font-size: 12px;
   margin-bottom: 0px; }
+
+/* Clrea Fix*/
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0; }
 
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
