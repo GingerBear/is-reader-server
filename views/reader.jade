@@ -32,6 +32,8 @@ html.no-js
         .reader-panel-div
           .fixed-panel-div
             .panel-tool-div
+              a.btn.btn-default(title='Settings').settings-btn
+                span.glyphicon.glyphicon-cog
               a.btn.btn-default(title='Menu').menu-btn
                 span.glyphicon.glyphicon-list
               a.btn.btn-default(title='Notes and Marks').notes-list-btn
@@ -41,11 +43,23 @@ html.no-js
                 span.glyphicon.glyphicon-chevron-left
               a.btn.btn-default.next-page
                 span.glyphicon.glyphicon-chevron-right
-            .note-list-div.clearfix.hidden
+            .note-list-div.reader-fn-list-div.clearfix.hidden
               h4.clearfix Note List
-                span.close-note-list-div 
+                span.close-list-div 
                   span.glyphicon.glyphicon-remove
               ul.note-list.clearfix
+            .settings-list-div.reader-fn-list-div.clearfix.hidden
+              h4.clearfix Settings
+                span.close-list-div 
+                  span.glyphicon.glyphicon-remove
+              ul.settings-list.clearfix
+                li.zoom-set-div.clearfix
+                  span Zoom
+                  .btn-group.pull-right
+                    button.btn.btn-sm.zoom-out-btn.btn-default(type='button') -
+                    button.btn.btn-sm.zoom-default.btn-default(type='button') Default
+                    button.btn.btn-sm.zoom-in-btn.btn-default(type='button') +
+
         #pdfContainer.pdf-content
         //  .reader-notes-div
     .tool-pop.hidden

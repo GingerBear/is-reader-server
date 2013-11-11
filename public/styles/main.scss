@@ -782,7 +782,7 @@ $icon-font-path: "../bower_components/sass-bootstrap/fonts/";
 .note-div button span{
     color: #ccc; 
 }
-.note-list-div {
+.note-list-div, .settings-list-div {
     position: absolute;
     top: 5px;
     right: 45px;
@@ -794,23 +794,29 @@ $icon-font-path: "../bower_components/sass-bootstrap/fonts/";
     box-shadow: 0 2px 10px rgba(0,0,0,.2);
 }
 
-.note-list-div h4{
+.note-list-div h4,
+.settings-list-div h4{
     margin: 5px;
+    margin-bottom: 10px;
     font-size: 13px;
 }
-.note-list-div .close-note-list-div{
+.close-list-div{
     float: right;
     cursor: pointer;
     color: #999;
 }
-.note-list-div .close-note-list-div:hover{
+.close-list-div:hover{
     color: #333;
 }
-ul.note-list {
+ul.note-list, ul.settings-list {
     list-style: none;
     padding: 0;
     height: 500px;;
     overflow-y: scroll;
+}
+
+ul.settings-list {
+    height: auto;
 }
 ul.note-list li {
     padding: 3px;
@@ -845,6 +851,22 @@ ul.note-list li p {
     margin-right: 15px;
     font-size: 12px;
     margin-bottom: 0px;
+}
+
+.mark-quote {
+    color: #999;
+}
+
+.zoom-set-div {
+    padding: 0 5px;    
+}
+
+.zoom-set-div span {
+    font-size: 13px;
+}
+
+.zoom-set-div .btn-group {
+    font-size: 13px;
 }
  
 /* Clrea Fix*/

@@ -115,7 +115,7 @@ var LoadPage = function () {
                 // To fix, a ajax function should be called to get the real highlight and notes data from server.
 
                 for (var i = notes.length - 1; i >= 0; i--) {
-                    renderNote(notes[i].startContainer, notes[i].endContainer, notes[i].startOffset, notes[i].endOffest, notes[i].note);
+                    renderNote(notes[i].startContainer, notes[i].endContainer, notes[i].startOffset, notes[i].endOffest, notes[i].note, notes[i].is_mark);
                 };
 
             });
@@ -194,6 +194,7 @@ var LoadPage = function () {
             var pos = data[i].position.split(',');;
             notes.push({
                 note : data[i].note, 
+                is_mark : data[i].is_mark, 
                 startContainer : pos[0], 
                 endContainer : pos[1], 
                 startOffset : pos[2], 
@@ -231,7 +232,7 @@ var LoadPage = function () {
             // console.log(to); 
             $el.html($el.html().substring(0, from) + "<span class='hl-text'>" + $el.html().substring(from, to) + "</span>" + $el.html().substring(to));
         }
-        return function (startContainer, endContainer, startOffset, endOffest, note) {
+        return function (startContainer, endContainer, startOffset, endOffest, note, is_mark) {
             console.log(startContainer + ' |' + endContainer + ' |' + startOffset + ' |' + endOffest);
             // render underscore of the note
             if (startContainer === endContainer) {
@@ -245,7 +246,8 @@ var LoadPage = function () {
                 };
             }
             // render text of the note
-            if (note) appendNoteText(note, _getEleByIndex(startContainer));
+            if (!is_mark) 
+                appendNoteText(note, _getEleByIndex(startContainer));
         }
     })();
 
@@ -286,7 +288,8 @@ var LoadPage = function () {
             success: function(data){
                 fetchNoteList();
                 var pos = selectionPosition.split(',');
-                renderNote(pos[0], pos[1], pos[2], pos[3], note)
+                if (!ifMark)
+                    renderNote(pos[0], pos[1], pos[2], pos[3], note)
                 if (fn) fn();
             }
         });
@@ -327,7 +330,9 @@ var LoadPage = function () {
                         $('.note-list').append($('<li data-id="'+data[i]._id+'"><b>'+data[i].page+'</b>'
                         + '<span class="del-note-btn"><span class="glyphicon '
                         + 'glyphicon-remove-circle"></span></span><p class="note-text-p">'
-                        + (data[i].note || '[Mark]')+'</p></li>'));
+                        + (data[i].is_mark ? '<span class="mark-quote">"' : '')
+                        + (data[i].note || '[no note]')
+                        + (data[i].is_mark ? '"</span>' : '') + '</p></li>'));
                     };
                 }else{
                     $('.note-list').append($('<li>No Notes</li>'))
@@ -339,8 +344,8 @@ var LoadPage = function () {
                         pageGoto(page);
                     }
                 });
-                $('.close-note-list-div').on('click', function(){
-                    $('.note-list-div').animate({
+                $('.close-list-div').on('click', function(){
+                    $(this).parent().parent().animate({
                         right: "-=10",
                         opacity: 0.5
                     }, 100, function(){
@@ -377,12 +382,32 @@ var LoadPage = function () {
 
     $('.panel-tool-div').on('click', function(e){
         var target = $(e.target);
-        if (target.is('.menu-btn')){
-            page = page + 1;
-            pageGoto(page);
+        if (target.is('.settings-btn')|| target.is('.settings-btn span')){
+
+            if ($('.settings-list-div').is('.hidden')){
+                $('.settings-list-div').removeClass('hidden').animate({
+                    right: "+=10",
+                    opacity: 1
+                }, 100);
+            } else {
+                $('.settings-list-div').animate({
+                    right: "-=10",
+                    opacity: 0.5
+                }, 100, function(){
+                    $(this).addClass('hidden');
+                });
+            }
         } else if (target.is('.notes-list-btn') || target.is('.notes-list-btn span')) {
             console.log('Show note list');
             if ($('.note-list-div').is('.hidden')){
+                if (!$('.settings-list-div').is('.hidden')){
+                    $('.settings-list-div').animate({
+                        right: "-=10",
+                        opacity: 0.5
+                    }, 100, function(){
+                        $(this).addClass('hidden');
+                    });
+                }
                 $('.note-list-div').removeClass('hidden').animate({
                     right: "+=10",
                     opacity: 1
@@ -394,8 +419,7 @@ var LoadPage = function () {
                 }, 100, function(){
                     $(this).addClass('hidden');
                 });
-            }
-            
+            }            
         }
     });
 
@@ -432,6 +456,15 @@ var LoadPage = function () {
         }
     });
 
+    Array.prototype.printFirstN  = function(n) {
+        var s = '';
+        var len = this.length;
+        for(var i = 0; i < (n < len ? n : len); i++) {
+            s += ' ' + this[i];
+        }
+        return s + ' ...';
+    };
+
     $('#pdfContainer .reader-notes-div').on('mouseup', function(e) {
         e.stopPropagation;
         hideToolPop();
@@ -465,7 +498,11 @@ var LoadPage = function () {
         e.preventDefault();
         var target = $(e.target);
         if (target.is('.hl-btn')) {
-            saveNote('', true, false, function () {
+            // save first three selected words as mark 
+            var s = $(selection.getRangeAt(0).startContainer.parentElement)
+                    .text().substring(selection.getRangeAt(0).startOffset);
+            var note = s.split(' ').printFirstN(3);
+            saveNote(note, true, false, function () {
                 console.log('Mark Saved!');
                 hideToolPop()
             });
@@ -486,6 +523,21 @@ var LoadPage = function () {
         } else if (target.is('.share-btn')) {
             alert('share is building');
         }
+    });
+
+    $('.zoom-out-btn').click(function(e) {
+        scale -= 0.2;
+        refreshPage();
+    });
+
+    $('.zoom-in-btn').click(function(e) {
+        scale += 0.2;
+        refreshPage();
+    });
+
+    $('.zoom-default').click(function(e) {
+        scale = 2;
+        refreshPage();
     });
 
     return {
