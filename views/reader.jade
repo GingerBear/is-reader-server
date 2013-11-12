@@ -13,6 +13,7 @@ html.no-js
     link(rel='stylesheet', href='styles/main.css')
     link(rel='stylesheet', href='styles/pdf/pdf-render.css')
     script(src='bower_components/modernizr/modernizr.js')
+    script(src='scripts/pace.min.js')
   body
     //if lt IE 7
       p.browsehappy
@@ -56,9 +57,13 @@ html.no-js
                 li.zoom-set-div.clearfix
                   span Zoom
                   .btn-group.pull-right
-                    button.btn.btn-sm.zoom-out-btn.btn-default(type='button') -
-                    button.btn.btn-sm.zoom-default.btn-default(type='button') Default
-                    button.btn.btn-sm.zoom-in-btn.btn-default(type='button') +
+                    button.btn.btn-xs.zoom-out-btn.btn-default(type='button') -
+                    button.btn.btn-xs.zoom-default.btn-default(type='button') Default
+                    button.btn.btn-xs.zoom-in-btn.btn-default(type='button') +
+                li.show-mark-div.clearfix
+                  span Show Marks
+                  .btn-group.pull-right
+                    input(type="checkbox", checked).show-mark-check
 
         #pdfContainer.pdf-content
         //  .reader-notes-div
@@ -109,9 +114,17 @@ html.no-js
       success: function(data){
       console.log(data);
       if (data) {
+      $('title').html(data.title + ' - IS Reader');
       $('.title').html(data.title);
       page = new LoadPage(data.file_name, data.last_page, data._id);
       page.init();
+      $('.show-mark-check').change(function(){
+        if ($(this).is(':checked')) {
+          page.showMark();
+        } else {
+          page.hideMark();
+        }
+      });
       }
       }
       });

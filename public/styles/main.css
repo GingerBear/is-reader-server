@@ -4897,6 +4897,9 @@ td.visible-print {
   td.hidden-print {
     display: none !important; } }
 /* ==========================================================================
+   Colors
+   ========================================================================== */
+/* ==========================================================================
    Browse Happy prompt
    ========================================================================== */
 .browsehappy {
@@ -4904,6 +4907,79 @@ td.visible-print {
   background: #ccc;
   color: #000;
   padding: 0.2em 0; }
+
+/* ==========================================================================
+   Progress bar
+   ========================================================================== */
+.pace {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  -webkit-pointer-events: none;
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  z-index: 2000;
+  position: fixed;
+  margin: auto;
+  top: 12px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 200px;
+  height: 25px;
+  border: 2px solid #cccccc;
+  background-color: #fff; }
+
+.pace .pace-progress {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+  -webkit-transition: width 1s ease-in-out 1s linear;
+  -moz-transition: width 1s ease-in-out 1s linear;
+  -ms-transition: width 1s ease-in-out 1s linear;
+  -o-transition: width 1s ease-in-out 1s linear;
+  transition: width 1s ease-in-out 1s linear;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  max-width: 190px;
+  position: fixed;
+  z-index: 2000;
+  display: block;
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  height: 15px;
+  font-size: 12px;
+  background: #cccccc;
+  color: #cccccc;
+  line-height: 60px;
+  font-weight: bold;
+  font-family: Helvetica, Arial, "Lucida Grande", sans-serif; }
+
+.pace .pace-progress:after {
+  content: attr(data-progress-text);
+  display: inline-block; }
+
+.pace.pace-inactive {
+  display: none; }
 
 /* ==========================================================================
    Author's custom styles
@@ -5509,7 +5585,7 @@ td.visible-print {
 
 .hl-text {
   /*background-color: rgba(255,225,0,0.5);*/
-  border-bottom: 3px solid #555;
+  border-bottom: 3px solid #dd4b39;
   padding-bottom: 5px; }
 
 .note-text-area {
@@ -5518,17 +5594,26 @@ td.visible-print {
 .note-div {
   margin-top: 5px;
   position: absolute;
-  right: 108px;
+  right: 30px;
   color: #000;
   font: 11px 'arial';
   z-index: 97; }
 
 .note-div .note-text {
+  width: 300px;
+  background-color: #fff;
   position: absolute;
-  width: 130px; }
+  bottom: 10px;
+  left: -300px;
+  padding: 10px 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); }
 
-.note-div button span {
-  color: #ccc; }
+.note-div .btn-show-note-text {
+  float: right;
+  color: #dd4b39;
+  font-size: 15px;
+  cursor: pointer; }
 
 .note-list-div, .settings-list-div {
   position: absolute;
@@ -5596,16 +5681,15 @@ ul.note-list li p {
 .mark-quote {
   color: #999; }
 
-.zoom-set-div {
-  padding: 0 5px; }
+.settings-list li {
+  padding: 0 5px;
+  margin-bottom: 5px; }
 
-.zoom-set-div span {
-  font-size: 13px;
-  vertical-align: middle; }
+.settings-list span {
+  font-size: 12px; }
 
 .zoom-set-div .btn-group {
-  font-size: 13px;
-  vertical-align: middle; }
+  font-size: 11px; }
 
 /* Clrea Fix*/
 .clearfix:after {

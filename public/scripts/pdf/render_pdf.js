@@ -18,6 +18,7 @@ var LoadPage = function () {
     , pdf // store pdf file into a locally global variable 
     , selectionPosition
     , base_url = "/"
+    , show_mark = true 
     , totalPageNum = 0;
     //, base_url = "http://localhost:3000/";
 
@@ -113,11 +114,11 @@ var LoadPage = function () {
                 // after page rendered, fill the notes and notes. 
                 // Currently by a pre loaded global variable.
                 // To fix, a ajax function should be called to get the real highlight and notes data from server.
-
-                for (var i = notes.length - 1; i >= 0; i--) {
-                    renderNote(notes[i].startContainer, notes[i].endContainer, notes[i].startOffset, notes[i].endOffest, notes[i].note, notes[i].is_mark);
-                };
-
+                if (show_mark) {                        
+                    for (var i = notes.length - 1; i >= 0; i--) {
+                        renderNote(notes[i].startContainer, notes[i].endContainer, notes[i].startOffset, notes[i].endOffest, notes[i].note, notes[i].is_mark);
+                    };
+                }
             });
         });
     }
@@ -125,7 +126,7 @@ var LoadPage = function () {
     function refreshPage() {
         $("#pdfContainer").html("");
         $("html, body").animate({ scrollTop: 0 }, 0);
-        pdf.then(renderPdf);     
+        pdf.then(renderPdf);
         return this;
     }
 
@@ -152,26 +153,39 @@ var LoadPage = function () {
         });    
     }
 
-    function hideToolPop() {
-        $('.tool-pop').animate({
-            top: "-=10",
-            opacity: 0
-        }, 100, function() {
+    jQuery.fn.slideAndHide = function(direction, dis, speed, fn) {
+        var option = {};
+        option[direction] = (dis || "-=10");
+        option['opacity'] = 0.5;
+
+        $(this).animate(option, (speed || 100), function() {
             $(this).addClass('hidden');
+            if (fn) fn();
+        });
+    };
+
+    jQuery.fn.slideAndShow = function(direction, dis, speed, fn) {
+        var option = {};
+        option[direction] = (dis || "+=10");
+        option['opacity'] = 1;
+
+        $(this).css({opacity: 0.5}).removeClass('hidden').animate(option, (speed || 100), function() {
+            if (fn) fn();
+        });
+    };
+
+    function hideToolPop() {
+        $('.tool-pop').slideAndHide('top', undefined, undefined, function() {            
             $('.tool-pop .tools-list').removeClass('hidden');
             $('.tool-pop .note-text-area').addClass('hidden');
         });
     }
 
     function showToolPop(x, y) {
-        $('.tool-pop').removeClass('hidden').css({
+        $('.tool-pop').css({
             'top': y + 'px',
-            'left': x + 'px',
-            opacity: 0
-        }).animate({
-            top: "+=10",
-            opacity: 1
-        }, 100);
+            'left': x + 'px'
+        }).slideAndShow('top', undefined, undefined, undefined);
     }
 
     function getSelectionObj() {
@@ -252,9 +266,9 @@ var LoadPage = function () {
     })();
 
     var appendNoteText = function(text, relativeEl) {
-        var html = '<div class="note-div"><button class="btn btn-xs btn-default btn-show-note-text">'
-                 + '<span class="glyphicon glyphicon-comment"></span>'
-                 + '</button><p class="note-text hidden">'+text+'</p>'
+        var html = '<div class="note-div">'
+                 + '<p class="note-text hidden">'+text+'</p>'
+                 + '<span class="btn-show-note-text glyphicon glyphicon-comment"></span>'
                  + '</div>';
         $(html)
         .appendTo($('.reader-notes-div'))
@@ -265,9 +279,9 @@ var LoadPage = function () {
         .on('click', function(){
             var text = $(this).siblings('.note-text');
             if (text.is('.hidden'))
-                text.removeClass('hidden');
+                text.slideAndShow('bottom');
             else
-                text.addClass('hidden');
+                text.slideAndHide('bottom');
         });
         console.log(text+" rendered");
     }
@@ -547,6 +561,16 @@ var LoadPage = function () {
         },
 
         refresh: function() {
+            refreshPage();
+        },
+
+        showMark: function() {
+            show_mark = true;
+            refreshPage();
+        },
+
+        hideMark: function() {
+            show_mark = false;
             refreshPage();
         },
 
