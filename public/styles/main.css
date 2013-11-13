@@ -5510,6 +5510,19 @@ td.visible-print {
   margin-top: 0; }
 
 /* ==========================================================================
+   IS Reader Home
+   ========================================================================== */
+.btn-div {
+  float: right; }
+
+.btn-div button {
+  color: #555; }
+
+.upload-form {
+  display: none;
+  padding: 10px; }
+
+/* ==========================================================================
    PDF Reader
    ========================================================================== */
 #pdfContainer {
@@ -5528,7 +5541,7 @@ td.visible-print {
 
 .reader-panel-div {
   position: fixed;
-  right: 10px;
+  right: 15px;
   z-index: 99; }
 
 .reader-panel-div .panel-tool-div a {

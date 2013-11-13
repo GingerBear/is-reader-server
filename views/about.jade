@@ -13,26 +13,20 @@ block content
       ul.nav.nav-pills.pull-right
         li
           a(href='/login') Home
-        li
-          a(href='/about') About
         li.active
-          a(href='#') Sign Up
+          a(href='#') About
+        li
+          a(href='/signup') Sign Up
       h3.text-muted IS Reader
     .jumbotron
-      h2 Create an Account
-      form.form(role='form')
-        .form-group
-          label.sr-only(for='username') User Name
-          input#username.form-control(type='text', placeholder='Enter user name')
-        .form-group
-          label.sr-only(for='email') Email Address
-          input#email.form-control(type='email', placeholder='Enter email')
-        .form-group
-          label.sr-only(for='password') Password
-          input#password.form-control(type='password', placeholder='Password')
-        button.btn.btn-success.signup(type='submit') Sign Up
-    .row.marketing
-      .col-lg-6
+      h2 About IS Reader
+      ul 
+        li
+          p A pdf reader for you to keep reading from everywhere
+        li
+          p Keep documents, progresses and notes on cloud
+        li
+          p Working on modern browsers, including mobile
     .footer
       p IS Reader Team
   //

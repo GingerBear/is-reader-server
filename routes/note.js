@@ -48,7 +48,6 @@ exports.fetchNotes = function(req, res){
 };
 
 exports.fetchNoteList = function(req, res){
-  console.log(req);
   return NoteModel.find({book_id: req.params.id, user_id: req.cookies.user_id}, function (err, notes) {    console.log(notes);
   console.log(notes);
     if (!err) {

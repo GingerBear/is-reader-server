@@ -14,30 +14,27 @@ block content
         li.active
           a(href='#') Home
         li
-          a(href='#') About
+          a(href='/about') About
         li
           a(href='/signup') Sign Up
-      h3.text-muted is reader
+      h3.text-muted IS Reader
     .jumbotron
-      h1 Neilo! IS Reader
-      p.lead Always a Place to Read
+      h1 Hola! IS Reader
+      p.lead Continue Reading
+        span.dots
       form.form(role='form')
         .form-group
-          label.sr-only(for='email') Email address
+          label.sr-only(for='email') Email Address
           input#email.form-control(type='email', placeholder='Enter email')
         .form-group
           label.sr-only(for='password') Password
           input#password.form-control(type='password', placeholder='Password')
-        .checkbox
-          label
-            input(type='checkbox', checked='checked')
-            | Remember me
-        button.btn.btn-success.login(type='submit') Sign in
+        button.btn.btn-success.login(type='submit') Log In
     .row.marketing
       .col-lg-6
         .book-list
     .footer
-      p Neil Ding
+      p IS Reader Team
   //
      build:js scripts/vendor.js 
   //
@@ -49,30 +46,6 @@ block content
      endbuild 
   //
      Google Analytics: change UA-XXXXX-X to be your site's ID. 
-  script.
-    $('.login').click(function(e){
-    e.preventDefault();
-    var data = {
-    email       : $('#email').val(),
-    password    : $('#password').val()
-    }
-    console.log(data);
-    $.ajax({
-    type: 'POST',
-    url: "/user/login",
-    //url: "http://localhost:3000/user/login",
-    dataType: 'json',
-    data: data,
-    success: function(data){
-    console.log(data);
-    if (data.success) {
-    window.location = "/books";
-    } else {
-    window.location = "/login";
-    }
-    }
-    });
-    });
   script.
     (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
     function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;

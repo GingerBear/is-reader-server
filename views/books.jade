@@ -12,26 +12,31 @@ block content
     .header
       ul.nav.nav-pills.pull-right
         li.active
-          a(href='#') Home
-        li
-          a(href='#') About
+          a(href='#') Documents
         li
           a(href='/logout') Logout
-      h3.text-muted is reader
+      h3.text-muted IS Reader
+    .upload-form
+      form.form.file-upload(enctype='multipart/form-data')  
+        .form-group
+          input(type='file',name='file',id='file',multiple='') 
+        input(type='submit').btn.btn-primary
+      div.row
+        div.span12
+          div.progress.progress-striped.active.hide
+            div.progress-bar(style='width: 0%')
     .jumbotron
+      .btn-div
+        button.btn.btn-link.edit-show-btn(type='button')
+          | Edit
+        button.btn.btn-link.upload-show-btn(type='button')
+          | Upload 
       h2 Documents
       .book-list
-    form.form.file-upload(enctype='multipart/form-data')
-      input(type='file',name='file',id='file',multiple='') 
-      input(type='submit')
-    div.row
-      div.span12
-        div.progress.progress-striped.active.hide
-          div.bar(style='width: 0%')
     .row.marketing
       .col-lg-6
     .footer
-      p ♥ from the Yeoman team
+      p Neil Ding
   //
      build:js scripts/vendor.js 
   //
@@ -57,60 +62,22 @@ block content
     {{/empty}}
   //
      build:js scripts/main.js 
-  script(data-main='scripts/main', src='bower_components/requirejs/require.js')
-  script
-    var loadDocs = function() {
-    $('.book-list').html("Loading...");
-    $.ajax({
-    type: 'GET',
-    url: "/book_list",
-    //url: "http://localhost:3000/book_list",
-    dataType: 'json',
-    success: function(data){
-    var output = Mustache.render($('.book-tpl').text(), data);
-    $('.book-list').html(output);
-    }
-    });
-    };
-
-    loadDocs();
-
-    $('.file-upload input[type="submit"]').on('click', function(e) {
-      e.preventDefault();
-      $('div.progress').removeClass('hide');
-      var formData = new FormData();
-      var files = document.getElementById('file').files;
-      for(var f in files) {
-        formData.append(f, files[f]);
+  script(src='bower_components/requirejs/require.js')
+  script.
+    require.config({
+      paths: {
+          jquery: 'bower_components/jquery/jquery',
+          app: 'scripts/app'
       }
-
-      var xhr = new XMLHttpRequest();      
-      xhr.open('post', '/upload', true);      
-      xhr.upload.onprogress = function(e) {
-        if (e.lengthComputable) {
-          var percentage = (e.loaded / e.total) * 100;
-          $('div.progress div.bar').css('width', percentage + '%');
-        }
-      };
-      
-      xhr.onerror = function(e) {
-        console.log('An error occurred while submitting the form. Maybe your file is too big');
-      };
-      
-      xhr.onload = function() {
-        var result = jQuery.parseJSON( this.responseText );
-        if (result.success == true) {
-          // hide progress bar and refresh
-          $('div.progress').addClass('hide');
-          loadDocs();
-        }
-        console.log(this.statusText);
-      };
-      
-      xhr.send(formData);
-
     });
-  script
+    require(['app', 'jquery'], function (app, $) {
+        'use strict';
+        app.loadDocs();
+        // use app here
+        // console.log(app);
+        // console.log('Running jQuery %s', $().jquery);
+    });
+  script.
     (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
     function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
     e=o.createElement(i);r=o.getElementsByTagName(i)[0];
