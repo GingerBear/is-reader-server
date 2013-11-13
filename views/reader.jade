@@ -93,41 +93,21 @@ html.no-js
        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script> 
     //
        <script>document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script> 
-    script(src='bower_components/jquery/jquery.js')
+    script(src='bower_components/requirejs/require.js')
     script(src='scripts/pdf/pdf.js')
     script(src='scripts/pdf/compatibility.js')
     script(src='scripts/pdf/textlayerbuilder.js')
-    script(src='scripts/pdf/render_pdf.js')
     script.
-      function getURLParameter(name) {
-      return decodeURI(
-      (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
-      );
-      }
-      var book_id = getURLParameter('id');
-      var page;
-      $.ajax({
-      type: 'GET',
-      url: "/book/" + book_id,
-      //url: "http://localhost:3000/book/" + book_id,
-      dataType: 'json',
-      success: function(data){
-      console.log(data);
-      if (data) {
-      $('title').html(data.title + ' - IS Reader');
-      $('.title').html(data.title);
-      page = new LoadPage(data.file_name, data.last_page, data._id);
-      page.init();
-      $('.show-mark-check').change(function(){
-        if ($(this).is(':checked')) {
-          page.showMark();
-        } else {
-          page.hideMark();
+      require.config({
+        paths: {
+          jquery: 'bower_components/jquery/jquery',
         }
       });
-      }
-      }
+      require(['scripts/pdf_reader', 'jquery'], function (reader, $) {
+          'use strict';
+          reader.load();
       });
+
     //
        Google Analytics: change UA-XXXXX-X to be your site's ID. 
     script.
